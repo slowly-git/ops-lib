@@ -45,23 +45,25 @@ class zabbix_api:
             self.authID = response['result']
             return self.authID
 
-    def host_get(self, hostName=''):
+    def host_get(self, hostName=""):
         '''
-        获取主机信息
-        :param hostName: 
-        :return: 返回主机列表
+        :param hostName: 要查询的主机名称，默认为空，查询所有信息
+        :return host_info: 返回主机信息字典
+        host_info["host_count"] = 监控数量
+        host_info["host_name"] = 监控主机名称
+        host_info["host_search"] = 查询主机状态
         '''
         data = json.dumps({
             "jsonrpc": "2.0",
             "method": "host.get",
             "params": {
                 "output": "extend",
-                "filter": {"host": hostName}
+                "filter": {
+                    "name": [hostName]}
             },
             "auth": self.user_login(),
             "id": 1
         })
-        # request = urllib.request.Request(self.url, bytes(data, 'utf8'))
         request = urllib.request.Request(self.url, data.encode('utf8'))
         for key in self.header:
             request.add_header(key, self.header[key])
@@ -82,15 +84,19 @@ class zabbix_api:
         else:
             response = json.loads(result.read())
             result.close()
-            # print("主机数量：{_host_count}".format(_host_count=len(response['result'])))
-            L = []
+            host_info = dict()
+            host_info["host_count"] = len(response['result'])
+            host_info["host_name"] = []
+            host_info["host_search"] = {}
             for host in response['result']:
                 if len(hostName) == 0:
-                    L.append(host['name'])
-                    # print("{_name}".format(_name=host['name']))
-            return L
+                    host_info["host_name"].append(host['name'])
+                else:
+                    host_info["host_search"] = host
+            return host_info
 
 
 if __name__ == "__main__":
     zabbix = zabbix_api()
-    host = zabbix.host_get()
+    host = zabbix.host_get("www.57go.com")
+    print(host["host_search"])
