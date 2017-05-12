@@ -5,7 +5,7 @@ _zabbix_url：zabbix地址
 _zabbix_usr：zabbix用户名
 _zabbix_passwd：zabbix密码
 '''
-import socket, json, urllib.request
+import json, urllib.request
 from urllib.request import URLError
 
 _zabbix_url = "http://zabbix.past123.com/api_jsonrpc.php"
@@ -61,7 +61,7 @@ class zabbix_api:
                 "output": "extend",
                 "filter": {
                     "host": "",
-                    "name":hostName
+                    "name": hostName
                 }
             },
             "auth": self.user_login(),
@@ -101,5 +101,4 @@ class zabbix_api:
 
 if __name__ == "__main__":
     zabbix = zabbix_api()
-    host = zabbix.host_get()
-    print(host)
+    host = zabbix.host_get()['host_name']
