@@ -59,7 +59,9 @@ class zabbix_api:
             "params": {
                 "output": "extend",
                 "filter": {
-                    "name": [hostName]}
+                    "host": "",
+                    "name":hostName
+                }
             },
             "auth": self.user_login(),
             "id": 1
@@ -98,5 +100,5 @@ class zabbix_api:
 
 if __name__ == "__main__":
     zabbix = zabbix_api()
-    host = zabbix.host_get("www.57go.com")
-    print(host["host_search"])
+    host = zabbix.host_get()
+    print(host)
