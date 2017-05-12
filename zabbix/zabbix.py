@@ -47,6 +47,7 @@ class zabbix_api:
 
     def host_get(self, hostName=""):
         '''
+        获取监控主机
         :param hostName: 要查询的主机名称，默认为空，查询所有信息
         :return host_info: 返回主机信息字典
         host_info["host_count"] = 监控数量
