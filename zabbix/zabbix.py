@@ -7,6 +7,7 @@ _zabbix_passwd：zabbix密码
 '''
 import json, urllib.request
 from urllib.request import URLError
+import sys, argparse
 
 _zabbix_url = "http://zabbix.past123.com/api_jsonrpc.php"
 _zabbix_usr = "Admin"
@@ -101,4 +102,17 @@ class zabbix_api:
 
 if __name__ == "__main__":
     zabbix = zabbix_api()
-    host = zabbix.host_get()['host_name']
+    parser = argparse.ArgumentParser(description='zabbix  api ', usage='%(prog)s [options]')
+    parser.add_argument('-H', '--host', nargs='?', dest='listhost', default='host', help='查询主机')
+    parser.add_argument('-v', '--version', action='version', version='%(prog)s 1.0')
+    if len(sys.argv) == 1:
+        print(parser.print_help())
+    else:
+        args = parser.parse_args()
+        if args.listhost != 'host':
+            if args.listhost:
+                host = zabbix.host_get(hostName=args.listhost)['host_search']
+                print(host)
+            else:
+                host = zabbix.host_get()['host_name']
+                print(host)
