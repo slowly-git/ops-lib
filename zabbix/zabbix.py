@@ -9,9 +9,9 @@ import json, urllib.request
 from urllib.request import URLError
 import sys, argparse
 
-_zabbix_url = "http://zabbix.past123.com/api_jsonrpc.php"
-_zabbix_usr = "Admin"
-_zabbix_passwd = "xl-VPS-0ok)OK"
+_zabbix_url = 
+_zabbix_usr = 
+_zabbix_passwd = 
 
 
 class zabbix_api:
