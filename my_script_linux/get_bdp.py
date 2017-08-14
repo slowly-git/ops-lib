@@ -1,5 +1,9 @@
-#!/usr/bin/python
-# -*-coding: utf-8 -*-
+#!/usr/bin/env python
+# coding=utf-8
+# Author: zhuanming@camera360.com
+# function: ad status
+# date: 2017-08-01
+# version: 0.1
 
 import os, socket
 import datetime
