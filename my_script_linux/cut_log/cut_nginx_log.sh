@@ -8,7 +8,7 @@ LOGS_DIR="$HOME/data/nginx/logs"
 DAY_DIR=$LOGS_DIR/$(date -d "yesterday" +"%Y")/$(date -d "yesterday" +"%m")/$(date -d "yesterday" +"%d")
 DAY_GZIP_DIR=$LOGS_DIR/$(date -d "-2 day" +"%Y")/$(date -d "-2 day" +"%m")/$(date -d "-2 day" +"%d")
 DATA_DIR=$LOGS_DIR/`date +"%Y"`
-timeago=3
+timeago=0.6
  
 if [ ! -d $DAY_DIR ]
 then
@@ -19,5 +19,5 @@ mv $LOGS_DIR/*error.log* $DAY_DIR/
 
 sudo /home/worker/nginx/sbin/nginx -s reopen
 
-find $DATA_DIR -type f -mtime +${timeago} |xargs rm -v
+find $DATA_DIR -type f -mtime ${timeago} |xargs rm -v
 find $LOGS_DIR -empty -type d |xargs rm -vrf

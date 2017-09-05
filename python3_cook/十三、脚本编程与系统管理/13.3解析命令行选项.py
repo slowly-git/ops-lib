@@ -1,7 +1,7 @@
 import argparse
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='½Å±¾¹¦ÄÜ: Search some files')
+    parser = argparse.ArgumentParser(description='è„šæœ¬åŠŸèƒ½: Search some files')
 
     parser.add_argument(dest='filenames', metavar='filename', nargs='*')
     parser.add_argument('-p', '-pat', metavar='pattern', required=True, dest='patterns', action='append',
