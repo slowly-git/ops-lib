@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 # feature: delete zabbix hosts which is not health
-# É¾³ý×Ô¶¯×¢²á»úÆ÷ÖÐÒÑ¾­ÏÂÏßµÄ»úÆ÷
+
 
 import json, urllib2
 import logging
@@ -32,7 +32,7 @@ def _log(filename):
 
 def url_request(post_data, log):
     """
-    ¹«¹²ÇëÇó³éÀë
+    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     :param log:
     :param post_data:
     :return:
@@ -53,7 +53,7 @@ def url_request(post_data, log):
 
 def get_auth_code(log):
     """
-    »ñÈ¡µ½zabbixµÄµÇÂ¼ÊÚÈ¨Âë
+    ï¿½ï¿½È¡ï¿½ï¿½zabbixï¿½Äµï¿½Â¼ï¿½ï¿½È¨ï¿½ï¿½
     :return:
     """
     auth_para = {
@@ -83,7 +83,7 @@ def get_auth_code(log):
 
 def get_unhealthy_hosts(auth_code, log):
     """
-    »ñÈ¡·ÇÕý³£×´Ì¬µÄÖ÷»ú
+    ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     :param auth_code:
     :param log:
     :return:
@@ -97,8 +97,8 @@ def get_unhealthy_hosts(auth_code, log):
             "filter": {
                 "available": ["2"],
            #     "status": ["0"]
-                # status: 0,¼à¿ØÖÐ£» 1,Î´¼à¿Ø
-                # available£º0,¿ÉÓÃÎ´Öª£» 1,¿ÉÓÃ£»2,²»¿ÉÓÃ
+                # status: 0,ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ 1,Î´ï¿½ï¿½ï¿½
+                # availableï¿½ï¿½0,ï¿½ï¿½ï¿½ï¿½Î´Öªï¿½ï¿½ 1,ï¿½ï¿½ï¿½Ã£ï¿½2,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 # "host": "en-ap-mq-app-20160721143713-de99d2d6acd1110568895ba"
             },
         },
@@ -111,7 +111,7 @@ def get_unhealthy_hosts(auth_code, log):
 
 def delete_unhealthy_hosts(unhealthy_hosts, auth_code, log):
     """
-    É¾³ý´íÎóµÄÖ÷»ú
+    É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     :param log:
     :param unhealthy_hosts:
     :param auth_code:

@@ -1,0 +1,7 @@
+主机需要设置宏,需要监控的mongo端口：
+Macros:
+{$MONGODB_PORT}
+
+
+
+外部监控，数据在zabbix server

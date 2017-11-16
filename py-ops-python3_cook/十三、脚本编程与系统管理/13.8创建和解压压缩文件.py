@@ -1,7 +1,7 @@
 import shutil
 
 # 解压文件Python-3.3.0.tgz
-shutil.unpack_archive('Python-3.3.0.tgz')
+shutil.unpack_archive('Python-3.3.0.tgz','/tmp')
 
 # 用zip压缩文件Python-3.3.0.tgz,名字为py33.zip
 shutil.make_archive('py33','zip','Python-3.3.0')
