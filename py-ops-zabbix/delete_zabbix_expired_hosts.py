@@ -93,7 +93,7 @@ def get_unhealthy_hosts(auth_code, log):
         "method": "host.get",
         "params": {
             "output": ["hostid", "name", "available", "maintenance_status", "status", "error"],
-            "limit": 20,
+            "limit": 1,
             "filter": {
                 "available": ["2"],
            #     "status": ["0"]
