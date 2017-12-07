@@ -1,15 +1,28 @@
-package go_lib
+package main
 
 import (
 	"fmt"
+	"io"
 	"os"
-	"strings"
 )
 
 func main() {
-	who := "Alice "
-	if len(os.Args) > 1 {
-		who += strings.Join(os.Args[1:], " ")
+	CopyFile("target.txt", "source.txt")
+	fmt.Println("Copy done!")
+}
+
+func CopyFile(dstName, srcName string) (written int64, err error) {
+	src, err := os.Open(srcName)
+	if err != nil {
+		return
 	}
-	fmt.Println("Good Morning", who)
+	defer src.Close()
+
+	dst, err := os.OpenFile(dstName, os.O_WRONLY|os.O_CREATE, 0644)
+	if err != nil {
+		return
+	}
+	defer dst.Close()
+
+	return io.Copy(dst, src)
 }
