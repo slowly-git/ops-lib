@@ -3,9 +3,9 @@ FROM pinguo/php-base:v1.2
 # -----------------------------------------------------------------------------
 # Env src dir
 # -----------------------------------------------------------------------------
-ENV HOME /home/worker \
-    SRC_DIR $HOME/src \
-    swooleVersion 1.9.22
+ENV HOME /home/worker
+ENV SRC_DIR $HOME/src
+ENV swooleVersion 1.9.22
 
 RUN set -xe \
         && extDeps=" \
