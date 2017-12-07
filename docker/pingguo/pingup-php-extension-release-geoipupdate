@@ -1,0 +1,182 @@
+FROM pinguo/php-base:v1.2
+
+# -----------------------------------------------------------------------------
+# Env src dir
+# -----------------------------------------------------------------------------
+ENV HOME /home/worker \
+    SRC_DIR $HOME/src \
+    swooleVersion 1.9.22
+
+RUN set -xe \
+        && extDeps=" \
+                   libyaml-0-2 \
+                   libpng12-0 \
+                   libmcrypt4 \
+                   libmemcachedutil2 \
+                   build-essential \
+                   " \
+        && extDeps_dev=" \
+                       libbz2-dev \
+                       libpng-dev \
+                       libxslt-dev \
+                       libldap2-dev \
+                       libcurl4-openssl-dev \
+                       libssl-dev \
+                       python-dev \
+                       libyaml-dev \
+                       libmcrypt-dev \
+                       libmemcached-dev \ 
+                       zlib1g-dev \                                         
+                       " \
+        && apt-get update && apt-get install -y $extDeps $extDeps_dev --no-install-recommends && rm -rf /var/lib/apt/lists/* \
+
+        && ln -s /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/libldap.so \
+
+        # -----------------------------------------------------------------------------
+        # Install PHP Core extensions
+        # -----------------------------------------------------------------------------
+
+        && docker-php-ext-install bz2 gd gettext xsl ldap \
+
+        # -----------------------------------------------------------------------------
+        # Install extensions By LIB and SOURCE
+        # -----------------------------------------------------------------------------
+
+        # install lib: librdkafka
+        && cd ${SRC_DIR} \
+        && curl -LJ -o librdkafka.tar.gz https://github.com/edenhill/librdkafka/archive/v0.11.3.tar.gz \
+        && tar zxf librdkafka.tar.gz \
+        && rm -rf librdkafka.tar.gz \
+        && librdkafkaPath=`ls` \
+        && cd ${librdkafkaPath} \
+        && ./configure \
+        && make \
+        && make install \
+        && rm -rf $SRC_DIR/librdkafka* \
+    
+        # install lib: libmaxminddb
+        && cd ${SRC_DIR} \
+        && curl -LJ -o libmaxminddb.tar.gz https://github.com/maxmind/libmaxminddb/releases/download/1.3.1/libmaxminddb-1.3.1.tar.gz \
+        && tar -xf libmaxminddb.tar.gz \
+        && rm -rf libmaxminddb.tar.gz \
+        && maxminddbPath=`ls` \
+        && cd ${maxminddbPath} \
+        && ./configure \
+        && make \
+        && make install \
+        && rm -rf $SRC_DIR/libmaxminddb* \
+    
+        # install php-rdkafka
+        && cd ${SRC_DIR} \
+        && curl -LJ -o php-rdkafka.tar.gz https://github.com/arnaud-lb/php-rdkafka/archive/3.0.5.tar.gz \
+        && tar zxf php-rdkafka.tar.gz \
+        && rm -rf php-rdkafka.tar.gz \
+        && rdkafkaPath=`ls` \
+        && ( \
+            cd ${rdkafkaPath} \
+            && phpize \
+            && ./configure --with-php-config=/usr/local/bin/php-config \
+            && make -j \
+            && make install \
+        ) \
+        && rm -rf $SRC_DIR/php-rdkafka* \
+    
+        # install maxminddb
+        && cd ${SRC_DIR} \
+        && curl -LJ -o maxminddb.tar.gz https://github.com/maxmind/MaxMind-DB-Reader-php/archive/v1.2.0.tar.gz \
+        && tar zxf maxminddb.tar.gz \
+        && rm -rf maxminddb.tar.gz \
+        && maxminddbPath=`ls` \
+        && ( \
+            cd ${maxminddbPath}/ext \
+            && phpize \
+            && ./configure --with-php-config=/usr/local/bin/php-config \
+            && make -j \
+            && make install \
+        ) \
+        && rm -rf $SRC_DIR/* \
+    
+        # install swoole
+        && cd ${SRC_DIR} \    
+        && curl -LJ -o swoole-${swooleVersion}.tar.gz https://github.com/swoole/swoole-src/archive/v${swooleVersion}.tar.gz \
+        && mkdir -p swoole-${swooleVersion} \
+        && tar -xf swoole-${swooleVersion}.tar.gz -C swoole-${swooleVersion} --strip-components=1 \
+        && rm swoole-${swooleVersion}.tar.gz \
+        && ( \
+            cd swoole-${swooleVersion} \
+            && phpize \
+            && ./configure --with-php-config=/usr/local/bin/php-config --enable-async-redis --enable-openssl \
+            && make -j \
+            && make install \
+        ) \
+        && rm -rf swoole-${swooleVersion} \
+        
+        # enable extensions
+        && docker-php-ext-enable swoole rdkafka maxminddb \
+    
+        # ------------------------------------------------------------------------------------
+        # Install extensions By PECL
+        # ------------------------------------------------------------------------------------
+    
+        # install lib:rabbitmq-c(need by amqp)
+        && cd ${SRC_DIR} \
+        && curl -LJ -o rabbitmq-c.tar.gz https://github.com/alanxz/rabbitmq-c/releases/download/v0.8.0/rabbitmq-c-0.8.0.tar.gz \
+        && tar zxf rabbitmq-c.tar.gz \ 
+        && rm -rf rabbitmq-c.tar.gz \
+        && rabbitmqPath=`ls` \
+        && cd ${rabbitmqPath} \
+        && ./configure \
+        && make \
+        && make install \
+        && rm -rf $SRC_DIR/rabbitmq* \
+        
+        # install extensions
+        && pecl update-channels \
+        && pecl install yaml \
+        && pecl install mongodb \
+        && pecl install igbinary \
+        && echo yes | pecl install redis \
+        && pecl install inotify \
+        && pecl install channel://pecl.php.net/yac-2.0.2 \
+        && pecl install imagick \
+        && pecl install channel://pecl.php.net/mcrypt-1.0.0 \
+        && pecl install amqp \
+        && pecl install memcached \
+
+        # enable extensions
+        && docker-php-ext-enable opcache \
+        && docker-php-ext-enable yaml mongodb igbinary redis inotify yac imagick mcrypt amqp memcached \
+
+        # ------------------------------------------------------------------------------------
+        # Install aplications
+        # ------------------------------------------------------------------------------------
+
+        # install geoipupdate(confPath:/usr/local/etc/GeoIP.conf dpPath:/home/worker/data/www/geoip)
+        && cd ${SRC_DIR} \
+        && curl -LJ -o geoipupdate.tar.gz https://github.com/maxmind/geoipupdate/releases/download/v2.5.0/geoipupdate-2.5.0.tar.gz \
+        && tar -zxf geoipupdate.tar.gz \
+        && rm -rf geoipupdate.tar.gz \
+        && geoipupdatePath=`ls` \
+        && cd ${geoipupdatePath} \
+        && ./configure \
+        && make \
+        && make install \
+        && mkdir -p /home/worker/data/www/geoip \
+        && sed -i \
+               -e 's@AccountID 0@AccountID 124619@g' \
+               -e 's@LicenseKey 000000000000@LicenseKey DJtSJrEQWRnB@g' \
+               -e 's@# DatabaseDirectory /usr/local/share/GeoIP@DatabaseDirectory /home/worker/data/www/geoip@g' \
+               /usr/local/etc/GeoIP.conf \
+        && /usr/local/bin/geoipupdate \
+        && rm -rf $SRC_DIR/* \
+
+        # delete lib dev
+        && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $extDeps_dev
+
+
+
+ENTRYPOINT ["docker-php-entrypoint"]
+
+##<autogenerated>##
+CMD ["php", "-a"]
+##</autogenerated>##
