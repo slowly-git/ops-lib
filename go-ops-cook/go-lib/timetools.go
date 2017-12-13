@@ -33,4 +33,15 @@ func main() {
 	fmt.Println(tNowUtc.Format(time.RFC822))
 	fmt.Println(tNowUtc.Format(time.ANSIC))
 
+	getRunTime()
+
+}
+
+//计算函数的执行时间
+func getRunTime() {
+	start := time.Now()
+	time.Sleep(time.Second * 2)
+	end := time.Now()
+	delta := end.Sub(start)
+	fmt.Println("休眠时间:", delta)
 }
