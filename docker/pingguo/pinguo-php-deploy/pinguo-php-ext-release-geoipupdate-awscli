@@ -1,10 +1,10 @@
-FROM pinguo/php-base:v1.2
+FROM en-us-public-ops-harbor-1.360in.com:4333/pinguo/php71-base:v1.0
 
 # -----------------------------------------------------------------------------
 # Env src dir
 # -----------------------------------------------------------------------------
-ENV HOME /home/worker
-ENV SRC_DIR $HOME/src
+ENV HOME /home/worker 
+ENV SRC_DIR $HOME/src 
 ENV swooleVersion 1.9.22
 
 RUN set -xe \
@@ -13,6 +13,9 @@ RUN set -xe \
                    libpng12-0 \
                    libmcrypt4 \
                    libmemcachedutil2 \
+                   build-essential \
+                   python \
+                   python-pip \
                    " \
         && extDeps_dev=" \
                        libbz2-dev \
@@ -24,9 +27,12 @@ RUN set -xe \
                        python-dev \
                        libyaml-dev \
                        libmcrypt-dev \
-                       libmemcached-dev \                                          
+                       libmemcached-dev \ 
+                       zlib1g-dev \                                         
                        " \
         && apt-get update && apt-get install -y $extDeps $extDeps_dev --no-install-recommends && rm -rf /var/lib/apt/lists/* \
+        # add for deploy
+        && /usr/bin/pip install awscli \
 
         && ln -s /usr/lib/x86_64-linux-gnu/libldap.so /usr/lib/libldap.so \
 
@@ -107,7 +113,7 @@ RUN set -xe \
             && make -j \
             && make install \
         ) \
-        && rm -r swoole-${swooleVersion} \
+        && rm -rf swoole-${swooleVersion} \
         
         # enable extensions
         && docker-php-ext-enable swoole rdkafka maxminddb \
@@ -144,6 +150,29 @@ RUN set -xe \
         # enable extensions
         && docker-php-ext-enable opcache \
         && docker-php-ext-enable yaml mongodb igbinary redis inotify yac imagick mcrypt amqp memcached \
+
+        # ------------------------------------------------------------------------------------
+        # Install aplications
+        # ------------------------------------------------------------------------------------
+
+        # install geoipupdate(confPath:/usr/local/etc/GeoIP.conf dpPath:/home/worker/data/www/geoip)
+        && cd ${SRC_DIR} \
+        && curl -LJ -o geoipupdate.tar.gz https://github.com/maxmind/geoipupdate/releases/download/v2.5.0/geoipupdate-2.5.0.tar.gz \
+        && tar -zxf geoipupdate.tar.gz \
+        && rm -rf geoipupdate.tar.gz \
+        && geoipupdatePath=`ls` \
+        && cd ${geoipupdatePath} \
+        && ./configure \
+        && make \
+        && make install \
+        && mkdir -p /home/worker/data/www/geoip \
+        && sed -i \
+               -e 's@AccountID 0@AccountID 124619@g' \
+               -e 's@LicenseKey 000000000000@LicenseKey DJtSJrEQWRnB@g' \
+               -e 's@# DatabaseDirectory /usr/local/share/GeoIP@DatabaseDirectory /home/worker/data/www/geoip@g' \
+               /usr/local/etc/GeoIP.conf \
+        && /usr/local/bin/geoipupdate \
+        && rm -rf $SRC_DIR/* \
 
         # delete lib dev
         && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $extDeps_dev

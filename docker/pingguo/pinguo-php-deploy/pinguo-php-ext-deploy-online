@@ -1,0 +1,15 @@
+FROM en-us-public-ops-harbor-1.360in.com:4333/pinguo/php71-deploy:v1.0
+
+ENV PROJECT_SRC msf-ad-k8s.360in.com.last
+ENV PROJECT_DST msf-ad-k8s.360in.com
+ENV MSF_ENV production-us
+
+RUN set -xe \
+       && echo "yac.enable_cli=1" >> /usr/local/etc/php/conf.d/docker-php-ext-yac.ini \
+
+       # get code from s3
+       && /usr/local/bin/aws s3 cp s3://en-us-deploy/$PROJECT_SRC /home/worker/data/www/ \
+       && cd /home/worker/data/www/ \
+       && tar -xf $PROJECT_SRC \
+       && find  -maxdepth 100 ! -name $PROJECT_DST|grep "/"|grep -E ".git"|xargs -i rm -rf {} \
+       && rm -rf $PROJECT_SRC
