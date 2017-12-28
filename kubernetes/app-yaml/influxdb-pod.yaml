@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: influxdb
+  namespace: kube-system
+spec:
+  containers:
+  - name: influxdb
+    image: harbor.past123.com/past123/heapster-influxdb-amd64:v1.3.3
+  imagePullSecrets:
+  - name: regsecret
