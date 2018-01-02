@@ -17,7 +17,7 @@ KUBELET_HOSTNAME="--hostname-override=cn-office-ops-zam02.past123.com"
 KUBELET_POD_INFRA_CONTAINER="--pod-infra-container-image=gcr.io/google_containers/pause-amd64:3.0"
 #
 ## Add your own!
-KUBELET_ARGS="--cgroup-driver=cgroupfs \
+KUBELET_ARGS="--cgroup-driver=systemd \
               --cluster-dns=10.254.0.2 \
               --experimental-bootstrap-kubeconfig=/etc/sysconfig/kubernetes/bootstrap.kubeconfig \
               --kubeconfig=/etc/sysconfig/kubernetes/kubelet.kubeconfig \

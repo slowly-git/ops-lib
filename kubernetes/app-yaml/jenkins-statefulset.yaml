@@ -5,7 +5,7 @@ apiVersion: apps/v1beta1
 kind: StatefulSet
 metadata:
   name: jenkins
-  namespace: kube-system
+  namespace: jenkins
   labels:
     name: jenkins
 spec:
@@ -66,7 +66,7 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: jenkins-home
-      namespace: kube-system
+      namespace: jenkins
       #annotations:
       #  volume.beta.kubernetes.io/storage-class: anything
     spec:

@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: jenkins-ingress
-  namespace: kube-system
+  namespace: jenkins
 spec:
   rules:
   - host: jenkins-ingress.past123.com
