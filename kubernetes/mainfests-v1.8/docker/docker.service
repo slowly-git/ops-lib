@@ -19,7 +19,7 @@ Environment=DOCKER_HTTP_HOST_COMPAT=1
 Environment=PATH=/usr/libexec/docker:/usr/bin:/usr/sbin
 
 ExecStart=/usr/bin/dockerd \
-          --exec-opt native.cgroupdriver=systemd \
+          --exec-opt native.cgroupdriver=cgroupfs \
           $DOCKER_OPT_BIP \
           $DOCKER_OPT_IPMASQ \
           $DOCKER_OPT_MTU \
