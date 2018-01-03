@@ -18,6 +18,8 @@ KUBELET_POD_INFRA_CONTAINER="--pod-infra-container-image=gcr.io/google_container
 #
 ## Add your own!
 KUBELET_ARGS="--cgroup-driver=cgroupfs \
+              --runtime-cgroups=/systemd/system.slice \
+              --kubelet-cgroups=/systemd/system.slice \
               --cluster-dns=10.254.0.2 \
               --experimental-bootstrap-kubeconfig=/etc/sysconfig/kubernetes/bootstrap.kubeconfig \
               --kubeconfig=/etc/sysconfig/kubernetes/kubelet.kubeconfig \
