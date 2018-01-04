@@ -19,6 +19,8 @@ spec:
         scheduler.alpha.kubernetes.io/critical-pod: ''
     spec:
       serviceAccountName: dashboard
+      imagePullSecrets:
+      - name: regsecret
       containers:
       - name: kubernetes-dashboard
         image: harbor.past123.com/past123/kubernetes-dashboard-amd64:v1.7.1
@@ -37,8 +39,6 @@ spec:
             port: 9090
           initialDelaySeconds: 30
           timeoutSeconds: 30
-      imagePullSecrets:
-          - name: regsecret
       tolerations:
       - key: "CriticalAddonsOnly"
         operator: "Exists"

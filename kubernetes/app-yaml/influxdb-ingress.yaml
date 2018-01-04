@@ -1,0 +1,14 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: monitoring-influxdb
+  namespace: kube-system
+spec:
+  rules:
+  - host: db.past123.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: monitoring-influxdb
+          servicePort: 8086
