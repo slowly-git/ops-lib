@@ -30,13 +30,13 @@ KUBE_API_ARGS="--authorization-mode=Node,RBAC \
                --enable-bootstrap-token-auth \
                --token-auth-file=/etc/sysconfig/kubernetes/token.csv \
                --service-node-port-range=30000-32767 \
-               --tls-cert-file=/etc/kubernetes/ssl/kubernetes.pem \
-               --tls-private-key-file=/etc/kubernetes/ssl/kubernetes-key.pem \
-               --client-ca-file=/etc/kubernetes/ssl/ca.pem \
-               --service-account-key-file=/etc/kubernetes/ssl/ca-key.pem \
-               --etcd-cafile=/etc/kubernetes/ssl/ca.pem \
-               --etcd-certfile=/etc/kubernetes/ssl/kubernetes.pem \
-               --etcd-keyfile=/etc/kubernetes/ssl/kubernetes-key.pem \
+               --tls-cert-file=/etc/sysconfig/kubernetes/ssl/kubernetes.pem \
+               --tls-private-key-file=/etc/sysconfig/kubernetes/ssl/kubernetes-key.pem \
+               --client-ca-file=/etc/sysconfig/kubernetes/ssl/ca.pem \
+               --service-account-key-file=/etc/sysconfig/kubernetes/ssl/ca-key.pem \
+               --etcd-cafile=/etc/sysconfig/kubernetes/ssl/ca.pem \
+               --etcd-certfile=/etc/sysconfig/kubernetes/ssl/kubernetes.pem \
+               --etcd-keyfile=/etc/sysconfig/kubernetes/ssl/kubernetes-key.pem \
                --enable-swagger-ui=true \
                --apiserver-count=3 \
                --audit-log-maxage=30 \
