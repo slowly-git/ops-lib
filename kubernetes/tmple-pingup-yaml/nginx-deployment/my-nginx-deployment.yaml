@@ -1,0 +1,38 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: my-nginx 
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        volumeMounts:
+        - mountPath: /test-pd
+          name: test-volume
+          subPath: my-nginx-deployment 
+        image: nginx:1.7.9 
+        env:
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+        command:
+          - "/bin/sh"
+        args:
+          - "-c"
+          - "mkdir -p /test-pd/$HOSTNAME && sed -i 's/#gzip/gzip/g' /etc/nginx/nginx.conf && a=$(echo \"#$POD_NAME\") && sed -i '/gzip  on;/a \ '$(echo $a)'' /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+        ports:
+        - containerPort: 80
+      volumes:
+      - name: test-volume
+        hostPath:
+          # directory location on host
+          path: /tmp/
+          # this field is optional
+          type: Directory

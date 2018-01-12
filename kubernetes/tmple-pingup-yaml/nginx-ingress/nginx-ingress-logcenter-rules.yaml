@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  name: nginx-ingress 
+  namespace: logcenter 
+spec:
+  rules:
+  - host: logs-ad.360in.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: elastic-with-kibana 
+          servicePort: 5601 
+  - host: kibana.camera360.com 
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: elastic-with-kibana 
+          servicePort: 5601 
+  # This section is only required if TLS is to be enabled for the Ingress
+  tls:
+      - hosts:
+          - kibana.camera360.com 
+        secretName: nginx-secret
+
+      - hosts:
+          - logs-ad.360in.com 
+        secretName: nginx-secret.360in.com

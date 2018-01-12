@@ -1,0 +1,9 @@
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: traefik-admin 
+subsets:
+  - addresses:
+      - ip: 10.1.12.49 
+    ports:
+      - port: 8580 

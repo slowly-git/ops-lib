@@ -1,0 +1,126 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-k8s-rules
+  namespace: monitoring
+data:
+  alertmanager.rules: |
+    groups:
+    - name: alertmanager
+      rules:
+      - alert: FailedReload
+        expr: alertmanager_config_last_reload_successful == 0
+        for: 10m
+        labels:
+          severity: warning
+          services: ops
+        annotations:
+          description: Reloading Alertmanager's configuration has failed for {{ $labels.namespace
+            }}/{{ $labels.pod}}.
+          summary: Alertmanager configuration reload has failed
+  kube-apiserver.rules: |
+    groups:
+    - name: kube-apiserver
+      rules:
+      - alert: K8SApiserverDown
+        expr: count(up{job="kubernetes-apiservers"}) < 3 
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          description: Prometheus failed to scrape API server(s),Now API server Number is {{$value}} 
+          summary: API server unreachable
+  prometheus.rules: |
+    groups:
+    - name: prometheus
+      rules:
+      - alert: FailedReload
+        expr: prometheus_config_last_reload_successful == 0
+        for: 10m
+        labels:
+          severity: warning
+          services: ops
+        annotations:
+          description: Reloading Prometheus' configuration has failed for {{ $labels.namespace
+            }}/{{ $labels.pod}}.
+          summary: Prometheus configuration reload has failed
+
+  nodes_disk.rules: |
+    groups:
+    - name: nodes_disk 
+      rules:
+      - alert: nodes_disk_root_filesystem_usage 
+        expr: node_filesystem_avail{mountpoint="/",kubernetes_name="node-exporter",fstype="overlay"}/1024/1024/1024 < 8
+        #for: 30s 
+        labels:
+          severity: warning
+          services: ops
+        annotations:
+          description: PROBLEM,主机 {{$labels.instance}}, {{$labels.app}},磁盘空间小于 {{$value}}gb
+          summary: node_disk_root_filesystem_usage_less_then 5gb 
+      - alert: nodes_disk_/data_filesystem_usage 
+        expr: node_filesystem_avail{mountpoint="/data",kubernetes_name="node-exporter"}/1024/1024/1024 < 10 
+        #for: 30s 
+        labels:
+          severity: warning
+        annotations:
+          description: PROBLEM,主机 {{$labels.instance}}, {{$labels.app}},磁盘空间小于 {{$value}}gb
+  nodes_memory_free.rules: |
+    groups:
+    - name: nodes_memory
+      rules:
+      - alert: nodes_memory_free
+        expr: node_memory_MemFree{job="kubernetes-service-endpoints",kubernetes_name="node-exporter"}/1024/1024 < 100 
+        #for: 30s 
+        labels:
+          severity: warning
+          services: ops
+        annotations:
+          description: PROBLEM,主机 {{$labels.instance}}, {{$labels.app}},剩余内存空间小于 {{$value}}Mb
+          summary: node_free_memory_less_than 100Mb 
+
+  cluster_all_nodes_cpu_usage_percent.rules: |
+    groups:
+    - name: cluster_cpu_usage 
+      rules:
+      - alert: cluster_cpu_usage 
+        expr: 100*sum(rate(node_cpu{mode!="idle",kubernetes_name="node-exporter"}[1m])) / sum(machine_cpu_cores) > 96 
+        for: 30m 
+        labels:
+          severity: warning
+          services: ops
+        annotations:
+          description: PROBLEM,Kubernetes Cluster 剩余CPU小于 {{$value}}%
+          summary: node_free_cpu_less_then_10%
+
+  application.rules: |
+    groups:
+    - name: application 
+      rules:
+      - alert: application_error_log_num 
+        expr: Application_Error_Log_From_Project > 100
+        for: 15s 
+        labels:
+          services: ads 
+          services: ops 
+        annotations:
+          description: PROBLEM,主机 {{$labels.pod_name}}, {{$labels.pod_ip}},业务runtime的error_log每分钟大于 {{$value}}
+          summary: application have error
+      - alert: ad-kfka-consumer down 
+        expr: up{instance="http://ad-kfka.360in.com/"} != 1 
+        for: 30s 
+        labels:
+          services: ads 
+          services: ops 
+        annotations:
+          description: PROBLEM,服务 {{$labels.instance}} 挂掉,返回值不等于 {{$value}}
+          summary: service ad-kfka.360in.com 挂掉 
+      - alert: exp-kfka-consumer down 
+        expr: up{instance="http://exp-kfka.360in.com/"} != 1 
+        for: 30s 
+        labels:
+          services: ads 
+          services: ops 
+        annotations:
+          description: PROBLEM,服务 {{$labels.instance}} 挂掉,返回值不等于 {{$value}}
+          summary: service exp-kfka.360in.com 挂掉 

@@ -1,0 +1,44 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: traefik-ingress
+  namespace: istio-system 
+  annotations:
+    prometheus.io/probe: 'true'
+spec:
+  rules:
+  - host: istio.camera360.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: istio-ingress 
+          servicePort: 80
+  - host: grafana-istio.camera360.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: grafana 
+          servicePort: 3000
+  - host: servicegraph.camera360.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: servicegraph 
+          servicePort: 8088 
+  - host: zipkin.camera360.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: zipkin 
+          servicePort: 9411 
+  - host: prometheus-istio.camera360.com 
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: prometheus 
+          servicePort: 9090 

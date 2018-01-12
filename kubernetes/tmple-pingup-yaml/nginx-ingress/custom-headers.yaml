@@ -1,0 +1,7 @@
+apiVersion: v1
+data:
+  Connection: "keep-alive"
+kind: ConfigMap
+metadata:
+  name: custom-headers
+  namespace: nginx-ingress

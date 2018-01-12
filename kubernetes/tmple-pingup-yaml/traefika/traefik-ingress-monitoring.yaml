@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: traefik-ingress
+  namespace: monitoring 
+  annotations:
+    prometheus.io/probe: 'true'
+spec:
+  rules:
+  - host: prometheus.camera360.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: prometheus-svc 
+          servicePort: 9096 
+  - host: alert.camera360.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: prometheus-deployment-alertmanager
+          servicePort: 9093 

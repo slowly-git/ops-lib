@@ -1,0 +1,55 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    ingress.kubernetes.io/ssl-redirect: 'False'
+    nginx.org/redirect-to-https: 'False'
+    nginx.org/hsts: 'False'
+    prometheus.io/probe: 'true'
+  name: nginx-ingress 
+  namespace: ads
+spec:
+  rules:
+  - host: ad-kfka.360in.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: ads-ad-kafka-consumer 
+          servicePort: 8000
+  - host: exp-kfka.360in.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: ads-exp-kafka-consumer 
+          servicePort: 8000
+  - host: ad.360in.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: ads-ad
+          servicePort: 80
+  - host: ad-inner.360in.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: ads-ad
+          servicePort: 80
+  - host: exp.360in.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: ads-exp
+          servicePort: 8000
+  - host: exp-inner.360in.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: ads-exp
+          servicePort: 8000

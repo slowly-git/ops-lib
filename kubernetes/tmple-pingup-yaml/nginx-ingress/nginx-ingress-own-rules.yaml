@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  name: nginx-ingress 
+  namespace: nginx-ingress 
+spec:
+  rules:
+  - host: nginx-admin.camera360.com
+    http:
+      paths:
+      - path: /nginx_status
+        backend:
+          serviceName: nginx-ingress-nginx-ingress-controller-stats 
+          servicePort: 18080
+  # This section is only required if TLS is to be enabled for the Ingress
+  tls:
+      - hosts:
+          - nginx-admin.camera360.com 
+        secretName: nginx-secret 

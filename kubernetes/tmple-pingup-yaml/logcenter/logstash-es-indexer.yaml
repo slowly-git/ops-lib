@@ -1,0 +1,56 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: logstash-es-indexer 
+  namespace: logcenter 
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: logstash-es-indexer 
+    spec:
+      containers:
+      - name: logstash-es-indexer 
+        image: en-us-public-ops-harbor-1.360in.com:4333/pinguo/logstash-es-indexer:v3
+        resources:
+          # TODO: Set memory limits when we've profiled the container for large
+          # clusters, then set request = limit to keep this container in
+          # guaranteed class. Currently, this container falls into the
+          # "burstable" category so the kubelet doesn't backoff from restarting it.
+          limits:
+            memory: "9096Mi"
+            cpu: "4" 
+          requests:
+            cpu: "2" 
+            memory: "4048Mi"
+        livenessProbe:
+          exec:
+            command:
+            - /bin/bash 
+            - -c 
+            - ps -ef |grep logstash
+          initialDelaySeconds: 60
+          timeoutSeconds: 5
+          successThreshold: 1
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - /bin/bash 
+            - -c 
+            - ps -ef |grep docker-entrypoint 
+          initialDelaySeconds: 3
+          timeoutSeconds: 5
+        env:
+        - name: LS_HEAP_SIZE 
+          value: "8g"
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.name
+      nodeSelector:
+        type: logcenter 
+      imagePullSecrets:
+      - name: pull-secret 

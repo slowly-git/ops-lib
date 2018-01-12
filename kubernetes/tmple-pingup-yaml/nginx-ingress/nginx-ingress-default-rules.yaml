@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: nginx
+  name: nginx-ingress 
+  namespace: default 
+spec:
+  rules:
+  - host: my-nginx.360in.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: my-nginx
+          servicePort: 80
+  # This section is only required if TLS is to be enabled for the Ingress
+  tls:
+      - hosts:
+          - my-nginx.360in.com 
+        secretName: nginx-secret.360in.com 

@@ -1,0 +1,9 @@
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: spider-qa 
+subsets:
+  - addresses:
+      - ip: 10.1.12.79 
+    ports:
+      - port: 80 

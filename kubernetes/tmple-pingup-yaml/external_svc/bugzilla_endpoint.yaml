@@ -1,0 +1,9 @@
+kind: Endpoints
+apiVersion: v1
+metadata:
+  name: bugzilla 
+subsets:
+  - addresses:
+      - ip: 10.1.12.77
+    ports:
+      - port: 80 
