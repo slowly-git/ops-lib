@@ -23,7 +23,6 @@ KUBELET_ARGS="--cgroup-driver=cgroupfs \
               --cluster-dns=10.254.0.2 \
               --experimental-bootstrap-kubeconfig=/etc/sysconfig/kubernetes/bootstrap.kubeconfig \
               --kubeconfig=/etc/sysconfig/kubernetes/kubelet.kubeconfig \
-              --require-kubeconfig \
               --cert-dir=/etc/sysconfig/kubernetes/ssl \
               --cluster-domain=cluster.local. \
               --hairpin-mode=promiscuous-bridge \
