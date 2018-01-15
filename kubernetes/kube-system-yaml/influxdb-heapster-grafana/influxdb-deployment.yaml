@@ -17,13 +17,8 @@ spec:
         volumeMounts:
         - mountPath: /data
           name: influxdb-storage
-        - mountPath: /etc/
-          name: influxdb-config
       imagePullSecrets:
       - name: regsecret
       volumes:
       - name: influxdb-storage
         emptyDir: {}
-      - name: influxdb-config
-        configMap:
-          name: influxdb-config

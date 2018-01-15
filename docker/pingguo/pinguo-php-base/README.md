@@ -84,3 +84,9 @@ RUN curl -fsSL 'https://xcache.lighttpd.net/pub/Releases/3.2.0/xcache-3.2.0.tar.
     && docker-php-ext-enable xcache
 ```
 
+4、镜像构建方式
+
+```
+chmod a+x docker-php-*
+docker build --no-cache -t  cn-bj-public-ops-harbor-1.360in.com/pinguo/php71-base:v1.0 .
+```
