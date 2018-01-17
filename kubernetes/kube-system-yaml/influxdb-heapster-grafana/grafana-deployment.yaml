@@ -20,6 +20,8 @@ spec:
         volumeMounts:
         - mountPath: /var
           name: grafana-storage
+          # 挂载到/data 下 grafana-storage子目录
+          subPath: grafana-storage
         env:
         - name: INFLUXDB_HOST
           value: monitoring-influxdb
@@ -31,8 +33,12 @@ spec:
           # service using a LoadBalancer or a public IP.
         - name: GF_AUTH_BASIC_ENABLED
           value: "false"
+          # 关闭匿名访问
         - name: GF_AUTH_ANONYMOUS_ENABLED
-          value: "true"
+          value: "false"
+          # 设置grafana dashboard 密码
+        - name: GF_SECURITY_ADMIN_PASSWORD
+          value: "Aa123456"
         - name: GF_AUTH_ANONYMOUS_ORG_ROLE
           value: Admin
         - name: GF_SERVER_ROOT_URL
@@ -42,6 +48,12 @@ spec:
           value: /
       imagePullSecrets:
       - name: regsecret
+      # 挂载到node /data目录
       volumes:
-      - name: grafana-storage
-        emptyDir: {}
+      - hostPath:
+          path: /data
+          type: Directory
+        name: grafana-storage
+      # 指定Pod 到task=monitor的Node上
+      nodeSelector:
+        task: monitor

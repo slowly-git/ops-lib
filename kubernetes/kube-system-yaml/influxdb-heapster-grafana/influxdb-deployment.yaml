@@ -17,8 +17,15 @@ spec:
         volumeMounts:
         - mountPath: /data
           name: influxdb-storage
+          subPath: influxdb-storage
       imagePullSecrets:
       - name: regsecret
+      # 指定data目录
       volumes:
-      - name: influxdb-storage
-        emptyDir: {}
+      - hostPath:
+          path: /data/
+          type: Directory
+        name: influxdb-storage
+      # 指定node
+      nodeSelector:
+        task: monitor

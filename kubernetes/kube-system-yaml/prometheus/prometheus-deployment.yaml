@@ -11,6 +11,9 @@ spec:
       labels:
         app: prometheus
     spec:
+      # 指定pod以用户id=0 运行
+      securityContext:
+        runAsUser: 0
       serviceAccountName: prometheus
       containers:
       - image: harbor.past123.com/past123/prometheus:v1.0
@@ -26,7 +29,8 @@ spec:
           protocol: TCP
         volumeMounts:
         - mountPath: "/prometheus"
-          name: data
+          name: prometheus-storage
+          subPath: prometheus-storage
         - mountPath: "/etc/prometheus"
           name: config-volume
         resources:
@@ -36,11 +40,19 @@ spec:
           limits:
             cpu: 500m
             memory: 2500Mi
+        securityContext:
+          allowPrivilegeEscalation: false
       imagePullSecrets:
       - name: regsecret
       volumes:
-      - emptyDir: {}
-        name: data
       - configMap:
           name: prometheus-config
         name: config-volume
+      # 指定node挂载/data为挂载目录
+      - hostPath:
+          path: /data
+          type: Directory
+        name: prometheus-storage
+      # 指定pod到固定node
+      nodeSelector:
+        task: monitor
