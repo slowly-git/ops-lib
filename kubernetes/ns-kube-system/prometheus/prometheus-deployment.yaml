@@ -53,6 +53,6 @@ spec:
           path: /data
           type: Directory
         name: prometheus-storage
-      # 指定pod到固定node
+      # 指定Pod 到task=monitor的Node上
       nodeSelector:
-        task: monitor
+        kubernetes.io/hostname: cn-office-ops-zam03.past123.com
