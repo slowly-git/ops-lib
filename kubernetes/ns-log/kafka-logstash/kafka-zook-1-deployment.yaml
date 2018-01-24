@@ -1,0 +1,70 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kafka-with-zook-1
+  namespace: log
+spec:
+  template:
+    metadata:
+      labels:
+        app: kafka-with-zook-1
+        id: "1"
+    spec:
+      containers:
+      - name: zook1
+        # image: digitalwonderland/zookeeper
+        image: harbor.past123.com/past123/zookeeper:1.0
+        ports:
+        - containerPort: 2181
+        volumeMounts:
+        - mountPath: /var/lib/zookeeper
+          name: zook1-storage 
+          subPath: zook1-storage
+        env:
+        - name: ZOOKEEPER_ID
+          value: "1"
+        - name: ZOOKEEPER_SERVER_1
+          value: zook1
+
+      - name: kafka1
+        # image: wurstmeister/kafka
+        image: harbor.past123.com/past123/kafka:1.0
+        ports:
+        - containerPort: 9092
+        # add JMX moniter
+        - containerPort: 1099
+        volumeMounts:
+        - mountPath: /kafka
+          name: kafka1-storage
+          subPath: kafka1-storage
+        env:
+        - name: KAFKA_JMX_OPTS
+          value: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=127.0.0.1 -Dcom.sun.management.jmxremote.rmi.port=1099"
+        - name: JMX_PORT
+          value: "1099"
+        - name: KAFKA_ADVERTISED_PORT
+          value: "9092"
+        - name: KAFKA_ADVERTISED_HOST_NAME
+          value: "127.0.0.1"
+        - name: KAFKA_ZOOKEEPER_CONNECT
+          value: "127.0.0.1:2181"
+        - name: KAFKA_BROKER_ID
+          value: "1"
+        # KAFKA_CREATE_TOPICS 在初始化的时候会自动创建topic, If you set it to topic1:3:3, it will create topic1 with 3 partitions and 3 replicas.
+        - name: KAFKA_CREATE_TOPICS
+          value: "k8s:3:1"
+
+
+      volumes:
+      - name: kafka1-storage 
+        hostPath:
+          path: /data/
+          type: Directory
+      - name: zook1-storage
+        hostPath:
+          path: /data/
+          type: Directory
+      imagePullSecrets:
+        - name: regsecret
+      nodeSelector:
+        kubernetes.io/hostname: "cn-office-ops-zam02.past123.com"

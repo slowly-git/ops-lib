@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: fluentd-es-v2.0.3
-  namespace: kube-system
+  namespace: log
   labels:
     k8s-app: fluentd-es
     version: v2.0.3
@@ -29,7 +29,8 @@ spec:
       containers:
       - name: fluentd-es
         # image: gcr.io/google-containers/fluentd-elasticsearch:v2.0.3
-        image: harbor.past123.com/past123/fluentd-elasticsearch:2.0.3
+        # image: harbor.past123.com/past123/fluentd-elasticsearch:2.0.3
+        image: harbor.past123.com/past123/fluentd-elasticsearch:1.0
         env:
         - name: FLUENTD_ARGS
           value: --no-supervisor -q

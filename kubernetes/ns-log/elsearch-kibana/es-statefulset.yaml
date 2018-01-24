@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: elasticsearch-logging
-  namespace: kube-system
+  namespace: log
   labels:
     k8s-app: elasticsearch-logging
     version: v5.6.4
@@ -17,6 +17,7 @@ spec:
       version: v5.6.4
   template:
     metadata:
+      namespace: log
       labels:
         k8s-app: elasticsearch-logging
         version: v5.6.4

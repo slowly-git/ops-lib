@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: zook1
+  namespace: log
+  labels:
+    app: zookeeper-1
+spec:
+  ports:
+  - name: client
+    port: 2181
+    protocol: TCP
+  - name: follower
+    port: 2888
+    protocol: TCP
+  - name: leader
+    port: 3888
+    protocol: TCP
+  selector:
+    app: kafka-with-zook-1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-svc
+  namespace: log
+  labels:
+    app: kafka-svc
+spec:
+  ports:
+  - port: 9092
+    name: kafka-port
+    protocol: TCP
+  - port: 1099
+    name: kafka-monitor
+    protocol: TCP
+  selector:
+    app: kafka-with-zook-1
+    id: "1"
+
