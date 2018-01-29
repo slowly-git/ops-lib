@@ -28,7 +28,7 @@ metadata:
     app: kafka-svc
 spec:
   ports:
-  - port: 9092
+  - port: 9094
     name: kafka-port
     protocol: TCP
   - port: 1099

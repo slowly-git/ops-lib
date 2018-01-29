@@ -23,13 +23,14 @@ data:
       - add_cloud_metadata:
     #cloud.id: ${ELASTIC_CLOUD_ID}
     #cloud.auth: ${ELASTIC_CLOUD_AUTH}
+    
     #output.elasticsearch:
-    #  hosts: ['${ELASTICSEARCH_HOST:elasticsearch}:${ELASTICSEARCH_PORT:9200}']
-    #  username: ${ELASTICSEARCH_USERNAME}
-    #  password: ${ELASTICSEARCH_PASSWORD}
+    #  hosts: ['elasticsearch-logging:9200']
+      #username: ${ELASTICSEARCH_USERNAME}
+      #password: ${ELASTICSEARCH_PASSWORD}
     output.kafka:
       enabled: true
-      hosts: ${KAFKA_SVC}
+      hosts: "kafka.past123.com:9094"
       topic: '%{[k8s]}'
       partition.round_robin:
         reachable_only: false

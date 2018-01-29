@@ -1,0 +1,32 @@
+kind: Deployment 
+metadata: 
+  name: nginx-dm
+spec: 
+  replicas: 1
+  template: 
+    metadata: 
+      labels: 
+        name: nginx 
+    spec: 
+      # kubectl taint nodes cn-office-ops-zam05.past123.com kubernetes.io/node=kanny:NoSchedule
+      # kubectl taint nodes cn-office-ops-zam05.past123.com kubernetes.io/node=kanny:NoExecute
+      tolerations:
+      - key: "kubernetes.io/node"
+        operator: "Equal"
+        value: "kanny"
+        effect: "NoSchedule"
+      - key: "kubernetes.io/node"
+        operator: "Equal"
+        value: "kanny"
+        effect: "NoExecute"
+      hostNetwork: true
+      containers: 
+        - name: nginx 
+          image: nginx:alpine 
+          imagePullPolicy: IfNotPresent
+          #ports:
+          #- name: http  
+          #  containerPort: 88
+          #  hostPort: 88
+      nodeSelector:
+        kubernetes.io/hostname: cn-office-ops-zam05.past123.com

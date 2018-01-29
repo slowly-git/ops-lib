@@ -36,8 +36,6 @@ spec:
         #  value:
         #- name: ELASTIC_CLOUD_AUTH
         #  value:
-        - name: KAFKA_SVC
-          value: "kafka-svc.log.svc:9092"
         securityContext:
           runAsUser: 0
         resources:

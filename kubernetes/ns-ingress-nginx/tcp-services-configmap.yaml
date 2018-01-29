@@ -1,5 +1,9 @@
 kind: ConfigMap
 apiVersion: v1
+data:
+  # 接受7373流量   port: namespace/svc
+  "7373": default/jony-fix-dev:7373
+  "9094": log/kafka-svc:9094
 metadata:
   name: tcp-services
   namespace: ingress-nginx

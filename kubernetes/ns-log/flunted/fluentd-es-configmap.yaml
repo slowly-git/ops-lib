@@ -327,23 +327,30 @@ data:
     <filter kubernetes.**>
       type kubernetes_metadata
     </filter>
+    #<match **>
+    #   type elasticsearch
+    #   log_level info
+    #   include_tag_key true
+    #   host elasticsearch-logging
+    #   port 9200
+    #   logstash_format true
+    #   # Set the chunk limits.
+    #   buffer_chunk_limit 2M
+    #   buffer_queue_limit 8
+    #   flush_interval 5s
+    #   # Never wait longer than 5 minutes between retries.
+    #   max_retry_wait 30
+    #   # Disable the limit on the number of retries (retry forever).
+    #   disable_retry_limit
+    #   # Use multiple threads for processing.
+    #   num_threads 2
+    #</match>
     <match **>
-       type elasticsearch
-       log_level info
-       include_tag_key true
-       host elasticsearch-logging
-       port 9200
-       logstash_format true
-       # Set the chunk limits.
-       buffer_chunk_limit 2M
-       buffer_queue_limit 8
-       flush_interval 5s
-       # Never wait longer than 5 minutes between retries.
-       max_retry_wait 30
-       # Disable the limit on the number of retries (retry forever).
-       disable_retry_limit
-       # Use multiple threads for processing.
-       num_threads 2
+       @type kafka
+       @id kafka_output
+       brokers kafka.past123.com:9094
+       output_data_type json
+       default_topic k8s
     </match>
 metadata:
   name: fluentd-es-config-v0.1.2

@@ -1,0 +1,15 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-log
+  namespace: log
+spec:
+  rules:
+  - host: kafka.past123.com
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: kafka-svc
+          servicePort: kafka-port

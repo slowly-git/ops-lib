@@ -1,0 +1,28 @@
+# 多端口
+kind: Endpoints                                                                                                                                                                                                                             
+apiVersion: v1                                                                                                                                                                                                                              
+metadata:                                                                                                                                                                                                                                   
+  name: jony-fix-dev
+subsets:                                                                                                                                                                                                                                    
+  - addresses:                                                                                                                                                                                                                              
+      - ip: 10.1.12.60                                                                                                                                                                                                                      
+    ports:                                                                                                                                                                                                                                  
+    - name: http
+      port: 80  
+    - name: tcp
+      port: 7373
+---
+kind: Service                                                                                                                                                                                                                               
+apiVersion: v1                                                                                                                                                                                                                              
+metadata:                                                                                                                                                                                                                                   
+  name: jony-fix-dev
+spec:                                                                                                                                                                                                                                       
+  ports:                                                                                                                                                                                                                                    
+  - name: http
+    protocol: TCP                                                                                                                                                                                                                           
+    port: 80                                                                                                                                                                                                                                
+    targetPort: 80 
+  - name: tcp
+    protocol: TCP                                                                                                                                                                                                                           
+    port: 7373
+    targetPort: 7373

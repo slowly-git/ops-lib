@@ -1,0 +1,58 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: logstash-config
+  namespace: log
+  labels:
+    app: logstash-config
+data:
+  logstash-es.config: |-
+    input {
+      kafka {
+          bootstrap_servers         => ["kafka.past123.com:9094"]
+          client_id                 => "logstash"
+          group_id                  => "logstash"
+          auto_offset_reset         => "latest" 
+          consumer_threads          => 2
+          decorate_events           => true
+          topics                    => ["k8s"]
+          type                      => "k8s-cluster"
+          codec                     => "json_lines"
+      }
+    }
+    output {
+      elasticsearch {
+        codec           => "json"
+        hosts           => "elasticsearch-logging:9200"
+        manage_template => false
+        index           => "%{[@metadata][beat]}-%{+YYYY.MM.dd}"
+        document_type   => "%{[@metadata][type]}"
+      }
+    }
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: logstash-pipelines
+  namespace: log
+  labels:
+    app: logstash-pipelines
+data:
+  pipelines.yml: |-
+    - pipeline.id: logstash-es
+      queue.type: persisted
+      pipeline.workers: 1
+      path.config: "/etc/logstash/conf.d/logstash-es.config"
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: logstash-yml
+  namespace: log
+  labels:
+    app: logstash-yml
+data:
+  logstash.yml: |-
+    xpack.monitoring.enabled: false
+    http.port: 9600
+    log.format: plain
