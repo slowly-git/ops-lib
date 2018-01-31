@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata: 
+  name: samba-dm
+  labels:
+    k8s-app: samba-dm
+spec: 
+  selector:
+    matchLabels:
+      k8s-app: samba-dm
+  template: 
+    metadata: 
+      labels: 
+        k8s-app: samba-dm
+    spec: 
+      tolerations:
+      - key: "kubernetes.io/node"
+        operator: "Equal"
+        value: "kanny"
+        effect: "NoSchedule"
+      - key: "kubernetes.io/node"
+        operator: "Equal"
+        value: "kanny"
+        effect: "NoExecute"
+      hostNetwork: true
+      containers: 
+        - name: samba-dm
+          # image: dperson/samba:latest
+          image: cn-bj-public-ops-harbor-1.360in.com/pinguo/samba:1.0
+          imagePullPolicy: IfNotPresent
+          command: ["/usr/bin/samba.sh"]
+          # -u create user ; -s create share dir
+          args: ["-u","$(RAW)","-u","$(CHUXIU)","-s","$(PUBLIC)","-s","$(SHARE_RAW)","-s","$(SHARE_CHUXIU)"]
+          env:
+          - name: RAW
+            value: "raw;raw"
+          - name: CHUXIU
+            value: "chuxiu;chuxiu"
+          - name: PUBLIC
+            # <name;/path>[;browse;readonly;guest;users;admins;writelist;comment]
+            value: "public;/mount/log"
+          - name: SHARE_RAW
+            value: "raw;/mount/;no;no;no;raw;raw;raw"
+          - name: SHARE_CHUXIU
+            value: "chuxiu;/srv/;no;no;no;chuxiu;chuxiu;chuxiu"
+          ports:
+          - name: samba1
+            containerPort: 139
+            hostPort: 139
+          - name: samba2
+            containerPort: 445
+            hostPort: 445
+          volumeMounts:
+            - mountPath: /mount/raw
+              name: raw-storage
+            - mountPath: /mount/log
+              name: log-storage
+            - mountPath: /srv/log
+              name: log-storage
+            - mountPath: /srv/chuxiu
+              name: chuxiu-storage
+      volumes:
+      - name: raw-storage
+        hostPath:
+          path: /data/raw
+          type: Directory
+      - name: log-storage
+        hostPath:
+          path: /data/log
+          type: Directory
+      - name: chuxiu-storage
+        hostPath:
+          path: /data/chuxiu
+          type: Directory
+      imagePullSecrets:
+      - name: regsecret
+      nodeSelector:
+        pinguo/app: "kanny"

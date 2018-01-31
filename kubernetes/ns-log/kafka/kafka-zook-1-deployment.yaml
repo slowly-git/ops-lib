@@ -62,15 +62,15 @@ spec:
         # config brokers communication
         - name: KAFKA_INTER_BROKER_LISTENER_NAME
           value: BROKER
-        - name: KAFKA_INTER_BROKER_PORT # 原文档为:KAFKA_INTER_BROKER_LISTENER_PORT,在脚本start-kafka.sh发现为KAFKA_INTER_BROKER_PORT
+        - name: KAFKA_INTER_BROKER_PORT        # 原文档为:KAFKA_INTER_BROKER_LISTENER_PORT,在脚本start-kafka.sh发现为KAFKA_INTER_BROKER_PORT
           value: "9093"
 
         # config advertised.listeners
         - name: KAFKA_ADVERTISED_PROTOCOL_NAME #advertised.listeners protocol(协议)
           value: OUTSIDE
         - name: KAFKA_ADVERTISED_HOST_NAME     # advertised.listeners name    通过nginx-ingress转发tcp请求到9094端口
-          #value: "kafka-svc"
-          value: "kafka.past123.com"
+          value: "kafka-svc"
+          #value: "kafka.past123.com"
         - name: KAFKA_ADVERTISED_PORT          # advertised.listeners port
           value: "9094"
 

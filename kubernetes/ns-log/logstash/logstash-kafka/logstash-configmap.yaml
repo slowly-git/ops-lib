@@ -9,20 +9,16 @@ data:
   logstash-kafka.config: |-
     input {
       file {
-          path                      => "/var/lib/docker/containers/*.log"
+          path                      => "/var/log/containers/*.log"
       }
     }
     output {
       kafka {
-          bootstrap_servers         => ["kafka.past123.com:9094"]
-          client_id                 => "logstash"
-          group_id                  => "logstash"
-          auto_offset_reset         => "latest"
-          consumer_threads          => 2
-          decorate_events           => true
-          topics                    => ["k8s"]
-          type                      => "k8s-cluster"
+          #bootstrap_servers         => "kafka.past123.com:9094"
+          bootstrap_servers         => "kafka-svc:9094"
+          topic_id                  => "k8s"
           codec                     => "json_lines"
+          compression_type          => "gzip"
       }
     }
 ---

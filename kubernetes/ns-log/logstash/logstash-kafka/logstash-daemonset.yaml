@@ -1,20 +1,27 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: DaemonSet
 metadata:
   name: logstash-kafka
   namespace: log
   labels:
     k8s-app: logstash-kafka
+    version: v6.1.2
+    kubernetes.io/cluster-service: "true"
 spec:
-  replicas: 1
   selector:
     matchLabels:
       k8s-app: logstash-kafka
+      version: v6.1.2
   template:
     metadata:
       labels:
         k8s-app: logstash-kafka
+        version: v6.1.2
+        kubernetes.io/cluster-service: "true"
     spec:
+      # 访问 /var/log/containers/* 提权到root
+      securityContext:
+        runAsUser: 0
       containers:
       - name: logstash-es
         # logstash用的elastic官方镜像: docker pull docker.elastic.co/logstash/logstash:6.1.2
@@ -27,7 +34,7 @@ spec:
         volumeMounts:
         - name: data
           mountPath: /usr/share/logstash/data
-        - name: logstash-config
+        - name: logstash-kafka-config
           mountPath: /etc/logstash/conf.d
           readOnly: true
         - name: logstash-kafka-yml
@@ -37,8 +44,17 @@ spec:
         - name: logstash-kafka-pipelines
           mountPath: /usr/share/logstash/config/pipelines.yml
           subPath: pipelines.yml
+        # docker log
         - name: varlibdockercontainers
-          mountPath: /var/lib/docker/containers
+          mountPath: /data/docker/containers
+          readOnly: true
+        # pod log link
+        - name: podloglink
+          mountPath: /var/log/containers
+          readOnly: true
+        # pod log
+        - name: podlog
+          mountPath: /var/log/pods
           readOnly: true
         env:
           - name: XPACK_MONITORING_ENABLED
@@ -56,16 +72,22 @@ spec:
         configMap:
           defaultMode: 0766
           name: logstash-kafka-config
-      - name: logstash-yml
+      - name: logstash-kafka-yml
         configMap:
            defaultMode: 0766
            name: logstash-kafka-yml
-      - name: logstash-pipelines
+      - name: logstash-kafka-pipelines
         configMap:
            defaultMode: 0766
-           name: logstash-pipelines
+           name: logstash-kafka-pipelines
       - name: varlibdockercontainers
         hostPath:
-          path: /var/lib/docker/containers
+          path: /data/docker/containers
+      - name: podloglink
+        hostPath:
+          path: /var/log/containers
+      - name: podlog
+        hostPath:
+          path: /var/log/pods
       imagePullSecrets:
         - name: regsecret

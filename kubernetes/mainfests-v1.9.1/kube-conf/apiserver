@@ -6,7 +6,7 @@
 #
 ## The address on the local server to listen to.
 #KUBE_API_ADDRESS="--insecure-bind-address=sz-pg-oam-docker-test-001.tendcloud.com"
-KUBE_API_ADDRESS="--advertise-address=10.1.12.47 --bind-address=10.1.12.47 --insecure-bind-address=10.1.12.47"
+KUBE_API_ADDRESS="--advertise-address=10.1.12.47 --bind-address=0.0.0.0 --insecure-bind-address=10.1.12.47"
 #
 ## The port on the local server to listen on.
 #KUBE_API_PORT="--port=8080"
