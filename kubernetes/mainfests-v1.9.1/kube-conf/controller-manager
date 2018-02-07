@@ -12,4 +12,7 @@ KUBE_CONTROLLER_MANAGER_ARGS="--address=127.0.0.1 \
 			      --cluster-signing-key-file=/etc/sysconfig/kubernetes/ssl/ca-key.pem \
 			      --service-account-private-key-file=/etc/sysconfig/kubernetes/ssl/ca-key.pem \
 			      --root-ca-file=/etc/sysconfig/kubernetes/ssl/ca.pem \
-			      --leader-elect=true"
+			      --leader-elect=true \
+                              --horizontal-pod-autoscaler-downscale-delay=15m \
+                              --horizontal-pod-autoscaler-upscale-delay=1m \
+                              --horizontal-pod-autoscaler-use-rest-clients=true"

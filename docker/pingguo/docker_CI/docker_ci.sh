@@ -5,6 +5,7 @@
 #
 LOCK_FILE=/tmp/docker_ci_lock_file
 
+# Lock this shell when it is running
 if [[ ! -f ${LOCK_FILE} ]]
 then  
         touch ${LOCK_FILE}
@@ -13,6 +14,7 @@ else
         exit 1
 fi  
 
+# README help
 COMMAND_NAME=`basename $0`
 if [ $# -lt 3 ] 
 then
@@ -28,8 +30,8 @@ IMAGE_NAME=${IMAGE_REG}${IMAGE_PROJECT}-${IMAGE_TAG}
 
 IMAGE_DOCKERFILE=$2
 
-#DEPLOY_NAME=$3
-DEPLOY_LIST=$@
+ARRG_INPUT=$@
+read -a  DEPLOY_LIST <<< $ARRG_INPUT
 
 # build docker images
 $(cd ${IMAGE_DOCKERFILE} && /usr/bin/docker build --no-cache -t ${IMAGE_NAME} . > /dev/null)
@@ -43,7 +45,7 @@ $(cd ${IMAGE_DOCKERFILE} && /usr/bin/docker build --no-cache -t ${IMAGE_NAME} . 
 
 if [[ $? -eq 0 ]]
 then
-  for DEPLOY_NAME in ${DEPLOY_LIST[@]:3}
+  for DEPLOY_NAME in ${DEPLOY_LIST[@]:2}
   do
     su - root -c "kubectl set image deployment/${DEPLOY_NAME} ${DEPLOY_NAME}=${IMAGE_NAME} -n ads"
   done

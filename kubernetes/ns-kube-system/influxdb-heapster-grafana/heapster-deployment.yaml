@@ -1,4 +1,3 @@
----
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
@@ -15,11 +14,22 @@ spec:
       serviceAccountName: heapster
       containers:
       - name: heapster
-        image: harbor.past123.com/past123/heapster-amd64:v1.4.0
+        # image: k8s.gcr.io/heapster-amd64:v1.4.2
+        image: harbor.past123.com/past123/heapster-amd64:v1.4.2
         imagePullPolicy: IfNotPresent
         command:
         - /heapster
         - --source=kubernetes:https://kubernetes.default
         - --sink=influxdb:http://monitoring-influxdb.kube-system.svc:8086
+        # start metrics api
+        - --api-server=true
+        - --requestheader-client-ca-file=/var/run/kubernetes/client-ca-file
+        volumeMounts:
+        - name: client-ca
+          mountPath: /var/run/kubernetes
       imagePullSecrets:
       - name: regsecret
+      volumes:
+        - name: client-ca
+          configMap:
+            name: extension-apiserver-authentication

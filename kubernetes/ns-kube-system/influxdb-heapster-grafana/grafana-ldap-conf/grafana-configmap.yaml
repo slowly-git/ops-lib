@@ -1,0 +1,47 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: grafana-config
+  namespace: kube-system
+  labels:
+    app: grafana-config
+data:
+  grafana.ini: |-
+    [auth.ldap]
+    enabled = true 
+    config_file = /etc/grafana/ldap.toml
+    allow_sign_up = true 
+  
+  ldap.toml: |-
+    [[servers]]
+    host = "xx.xx.xx.xx"
+    port = 389
+    use_ssl = false
+    start_tls = false
+    ssl_skip_verify = true 
+    bind_dn = "UID=xxxxxxxxxxxxx,CN=users,CN=accounts,DC=c360in,DC=com"
+    bind_password = 'xxxxxxxxxxxxxxxxxx'
+    search_filter = "(uid=%s)"
+    search_base_dns = ["CN=users,CN=accounts,DC=c360in,DC=com"]
+    
+    [servers.attributes]
+    name = "givenName"
+    surname = "sn"
+    username = "uid"
+    member_of = "memberOf"
+    email =  "mail"
+    
+    [[servers.group_mappings]]
+    group_dn = "cn=admin,cn=groups,cn=accounts,dc=c360in,dc=com"
+    org_role = "Admin"
+    
+    [[servers.group_mappings]]
+    group_dn = "cn=locoming,cn=groups,cn=accounts,dc=c360in,dc=com"
+    org_role = "Editor"
+    
+    [[servers.group_mappings]]
+    group_dn = "*"
+    org_role = "Viewer"  
+    
+
+

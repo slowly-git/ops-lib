@@ -17,3 +17,8 @@ influxdb相似
 官方github:https://github.com/kubernetes/heapster/tree/master/grafana/dashboards
 
 或者 dashboard目录下的json文件
+
+# heapster
+
+```
+```
