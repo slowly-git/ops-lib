@@ -71,19 +71,19 @@ RUN set -xe \
 
         && ln -s /home/worker/nginx/sbin/nginx /usr/local/bin/nginx \
 
-        # deploy pinguo nginx common config
-        && cd ${SRC_DIR} \
-        && /usr/local/bin/aws s3 cp s3://pinguo-dev-us/go-ops-docker-app-conf/nginx_conf.last . --region us-east-1 \
-        && tar -zxf nginx_conf.last \
-        && /bin/cp -av nginx_conf/conf/* /home/worker/nginx/conf/ \
-        && mkdir -p /home/worker/nginx/conf/vhosts \
-        && /bin/cp -av nginx_conf/vhosts/* /home/worker/nginx/conf/vhosts \
+       # # deploy pinguo nginx common config
+       # && cd ${SRC_DIR} \
+       # && /usr/local/bin/aws s3 cp s3://pinguo-dev-us/go-ops-docker-app-conf/nginx_conf.last . --region us-east-1 \
+       # && tar -zxf nginx_conf.last \
+       # && /bin/cp -av nginx_conf/conf/* /home/worker/nginx/conf/ \
+       # && mkdir -p /home/worker/nginx/conf/vhosts \
+       # && /bin/cp -av nginx_conf/vhosts/* /home/worker/nginx/conf/vhosts \
 
-        # deploy APP nginx conf
-        && cd ${SRC_DIR} \
-        && /usr/local/bin/aws s3 cp s3://pinguo-dev-us/go-ops-docker-app-conf/ads-ad-nginx-conf/ads-ad-msf_nginx.last . --region us-east-1 \
-        && tar -zxPf ads-ad-msf_nginx.last \
-        && sed -i "s@error_log@#error_log@g" `grep error_log -rl /home/worker/nginx/conf/vhosts/` \
+       # # deploy APP nginx conf
+       # && cd ${SRC_DIR} \
+       # && /usr/local/bin/aws s3 cp s3://pinguo-dev-us/go-ops-docker-app-conf/ads-ad-nginx-conf/ads-ad-msf_nginx.last . --region us-east-1 \
+       # && tar -zxPf ads-ad-msf_nginx.last \
+       # && sed -i "s@error_log@#error_log@g" `grep error_log -rl /home/worker/nginx/conf/vhosts/` \
 
 
 
