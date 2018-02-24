@@ -1,0 +1,41 @@
+input{
+    kafka {
+        codec                     => "json_lines"
+        consumer_restart_sleep_ms => 1000
+        consumer_threads          => 10
+        fetch_message_max_bytes   => 20971520    # 20*1024*1024
+        group_id                  => "logstash-aws"
+        topic_id                  => "logstash"
+        zk_connect                => "kafka-with-zookeeper:2181"
+    }
+}
+filter {
+#    if [app_name] == "nginx" {
+#        drop{}
+#    }
+#    if [loglevel] =~ /^(notice|warning|error)$/ {
+#        drop{}
+#    }
+#    date {
+#        match => ["logdate", "ISO8601"]
+#    }
+    environment {
+        add_metadata_from_env => { 
+            "host" => "HOSTNAME"
+        }
+    }
+}
+output {
+#    stdout { codec => rubydebug {metadata => true} }
+    if [app_name] == 'nginx' {
+        file {
+            path => '/data/logbak/%{+YYYYMM}/%{+dd}/%{app_name}/%{domain}/%{app_name}.access.%{+YYYYMMddHH}.%{[@metadata][host]}.0'
+            message_format => "%{message}"
+        }
+    } else {
+        file {
+            path => '/data/logbak/%{+YYYYMM}/%{+dd}/%{app_name}/%{app_name}.%{loglevel}.%{+YYYYMMddHH}.%{[@metadata][host]}.0'
+            message_format => "%{message}"
+        }
+    }
+}

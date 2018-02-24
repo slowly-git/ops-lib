@@ -1,0 +1,48 @@
+input{
+    kafka {
+        codec                     => "json_lines"
+        consumer_restart_sleep_ms => 1000
+        consumer_threads          => 20 
+        fetch_message_max_bytes   => 10485760    # 10*1024*1024
+        group_id                  => "logstash-es"
+        topic_id                  => "logstash"
+        zk_connect                => "kafka-with-zookeeper:2181"
+    }
+}
+filter {
+    if [app_name] == "nginx" {
+        drop{}
+    }
+    mutate {
+        replace => ["host", "%{shipper}"]
+        convert => {"cost" => "float"}
+        convert => {"status" => "integer"}
+    }
+    date {
+        match => ["logdate", "ISO8601"]
+    }
+    if [app_name] == "nginx" {
+        grok {
+            patterns_dir => "patterns/grok-patterns"
+            match => ["urihost", "%{IPORHOST:iporhost}"]
+        }
+        mutate {
+            replace => ["urihost", "%{iporhost}"]
+        }
+    }
+    mutate {
+        remove_field => [ "shipper", "@version", "logdate", "iporhost", "type" ]
+    }  
+}
+output {
+#    stdout { codec => rubydebug }
+    if [app_name] != "nginx" or [urihost] != "127.0.0.1" {
+        elasticsearch {
+            codec      => "json"
+            flush_size => 1000
+            hosts      => ["elastic-with-kibana:9200"]
+            #hosts      => ["10.80.11.234:9200"]
+            workers    => 4
+        }
+    }
+}

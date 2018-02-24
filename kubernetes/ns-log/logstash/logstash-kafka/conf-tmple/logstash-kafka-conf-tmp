@@ -1,0 +1,44 @@
+input {
+    file {
+        path => '/data/deployments-*-logstash/*/*/*/*.log'
+    }
+}
+filter {
+    mutate {
+        add_field => ['shipper', '%{host}']
+        add_field => ['domain', 'default']
+    }
+    ruby {
+        code => "
+            if event['message'].length > 20480 then;
+                event['message'] = event['message'][0,20480];
+            end;
+        "
+    }
+   grok {
+            match => ["message", '^[0-9\/]+ [0-9:.]+ \[(?<loglevel>[^\]]+)\]']
+        }
+    if "_grokparsefailure" in [tags] { drop{} }
+    grok {
+        match => ["path", '.+/(?<app_name>[^/]+)/[^/]+\.log$']
+    }
+    if "_grokparsefailure" in [tags] { drop{} }
+   
+
+
+# start indexer
+    mutate {
+        remove_field => [ "log_year", "log_mon", "log_day", "log_hour", "log_min", "log_sec", "path", "log_suffix", "@version", "host" ]
+    }     
+}
+output {
+#   stdout { codec => rubydebug }
+    kafka {
+        codec             => "json_lines"
+        topic_id          => "logstash"
+        acks              => "1"
+        bootstrap_servers => "10.80.11.234:9092"
+        retries           => 30
+        retry_backoff_ms  => 200
+    }
+}

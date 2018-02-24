@@ -11,7 +11,7 @@ data:
       kafka {
           bootstrap_servers         => ["kafka.past123.com:9094"]
           client_id                 => "logstash"
-          group_id                  => "logstash"
+          group_id                  => "logstash_es"
           auto_offset_reset         => "latest" 
           consumer_threads          => 4
           decorate_events           => true

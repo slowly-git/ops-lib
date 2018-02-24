@@ -1,0 +1,4 @@
+###manitianer k8s log
+* * * * * bash -x /clean_deployment_pods.sh >>/dev/shm/clean_deployment_pods.log 2>&1 &
+1 * * * *  bash -x /cut_app_pod.sh >/dev/shm/cut_app_pod.log 2>&1 &
+*/30 * * * * for i in $(find /var/lib/docker/containers/ -size +2G); do cat /dev/null > $i; done
