@@ -1,0 +1,79 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: monitoring
+  annotations:
+    prometheus.io/scrape: 'true'
+  labels:
+    app: application-log-exporter
+    name: application-log-exporter
+  name: application-log-exporter
+spec:
+  clusterIP: None
+  ports:
+  - name: scrape
+    port: 9999
+    protocol: TCP
+  selector:
+    app: application-log-exporter
+  type: ClusterIP
+---
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  namespace: monitoring
+  name: application-log-exporter
+spec:
+  template:
+    metadata:
+      labels:
+        app: application-log-exporter
+      name: application-log-exporter
+#      annotations:
+#        prometheus.io/scrape: 'true'
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: monitor
+                operator: NotIn
+                values: 
+                - admit
+      containers:
+      - image: en-us-public-ops-harbor-1.360in.com:4333/pinguo/application_log:v5.6
+        resources:
+          # TODO: Set memory limits when we've profiled the container for large
+          # clusters, then set request = limit to keep this container in
+          # guaranteed class. Currently, this container falls into the
+          # "burstable" category so the kubelet doesn't backoff from restarting it.
+          limits:
+            memory: "512Mi"
+            cpu: "0.8" 
+          requests:
+            cpu: "0.1" 
+            memory: "100Mi"
+        name: application-log-exporter
+        ports:
+        - containerPort: 9999
+          hostPort: 9999
+          name: scrape
+        volumeMounts:
+        - mountPath: /data
+          name: application-volume 
+        - mountPath: /var/lib/docker/containers/
+          name: docker-run-volume 
+      hostNetwork: true
+      hostPID: true
+      imagePullSecrets:
+      - name: pull-secret
+      volumes:
+      - name: application-volume
+        hostPath:
+          path: /data
+          type: Directory
+      - name: docker-run-volume
+        hostPath:
+          path: /var/lib/docker/containers/
+          type: Directory

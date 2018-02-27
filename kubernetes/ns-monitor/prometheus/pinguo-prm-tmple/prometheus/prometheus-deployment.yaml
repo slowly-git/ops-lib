@@ -1,0 +1,62 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    name: prometheus-deployment
+  name: prometheus
+  namespace: monitoring
+  annotations:
+    prometheus.io/scrape: 'true'
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: prometheus
+      annotations:
+        prometheus.io/scrape: 'true'
+    spec:
+      serviceAccountName: prometheus-k8s
+      containers:
+      - image: prom/prometheus:v2.0.0
+        name: prometheus
+        command:
+        - "/bin/prometheus"
+        args:
+        - "--config.file=/etc/prometheus/prometheus.yml"
+        - "--web.enable-lifecycle"
+        - "--storage.tsdb.path=/prometheus/data"
+        - "--storage.tsdb.retention=16d"
+        - "--web.external-url=https://en-us-prometheus.camera360.com"
+        ports:
+        - containerPort: 9090
+          #hostPort: 9090
+          protocol: TCP
+        volumeMounts:
+        - mountPath: "/prometheus"
+          name: prometheus-storage
+          subPath: prometheus-storage
+        - mountPath: "/etc/prometheus"
+          name: config-volume
+        - mountPath: "/etc/prules"
+          name: config-volume-alert
+        resources:
+          requests:
+            cpu: 100m
+            memory: 100Mi
+          limits:
+            cpu: 1000m
+            memory: 2500Mi
+      volumes:
+      - name: prometheus-storage
+        hostPath:
+          path: /data/
+          type: Directory
+      - configMap:
+          name: prometheus-config
+        name: config-volume
+      - configMap:
+          name: prometheus-k8s-rules 
+        name: config-volume-alert
+      nodeSelector:
+        monitor: admit 

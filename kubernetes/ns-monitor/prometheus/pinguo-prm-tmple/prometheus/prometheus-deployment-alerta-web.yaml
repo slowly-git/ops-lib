@@ -1,0 +1,50 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+  name: prometheus-alerta-web
+  namespace: monitoring
+  annotations:
+    prometheus.io/scrape: 'true'
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: prometheus-alerta
+      annotations:
+        prometheus.io/scrape: 'true'
+    spec:
+      serviceAccountName: prometheus-k8s
+      containers:
+      - image: mongo 
+        name: prometheus-alerta-mongo
+        ports:
+        - containerPort: 27017 
+          protocol: TCP
+        volumeMounts:
+        - mountPath: "/data/db"
+          name: prometheus-storage
+          subPath: promethtus-alerta-mongo
+        resources:
+          requests:
+            cpu: 300m
+            memory: 100Mi
+          limits:
+            cpu: 500m
+            memory: 1000Mi
+      - image: alerta/alerta-web 
+        name: prometheus-alerta-web
+        ports:
+        - containerPort: 80 
+          protocol: TCP
+        env:
+        - name: "MONGO_URI"
+          value: "mongodb://127.0.0.1:27017/monitoring" 
+      volumes:
+      - name: prometheus-storage 
+        hostPath:
+          path: /data/
+          type: Directory
+      nodeSelector:
+        monitor: admit 
