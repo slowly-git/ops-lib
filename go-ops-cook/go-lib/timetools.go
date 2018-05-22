@@ -1,9 +1,9 @@
 package main
 
 import (
-	"time"
 	"fmt"
 	"reflect"
+	"time"
 )
 
 func main() {
@@ -30,6 +30,7 @@ func main() {
 	// other format
 	fmt.Println(tNowUtc.Format("02 Jan 2006 15:04"))
 	fmt.Println(tNowUtc.Format("20060102"))
+	fmt.Println(reflect.TypeOf(tNowUtc.Format("20060102")))
 	fmt.Println(tNowUtc.Format(time.RFC822))
 	fmt.Println(tNowUtc.Format(time.ANSIC))
 

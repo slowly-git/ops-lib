@@ -46,8 +46,8 @@ func main() {
 		"gf_server_protocol":         "http",
 		"backend_access_mode":        "proxy",
 	}
-        
-        # 如果在环境变量中检测到有envParams中的key,则将envParams中key相关的value替换为环境变量中的值
+
+	//如果在环境变量中检测到有envParams中的key,则将envParams中key相关的value替换为环境变量中的值
 	for k := range envParams {
 		if v := os.Getenv(strings.ToUpper(k)); v != "" {
 			envParams[k] = v
