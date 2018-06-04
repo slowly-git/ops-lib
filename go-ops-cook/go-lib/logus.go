@@ -5,35 +5,36 @@ import (
 	"os"
 )
 
-var Logging = logrus.New()
+var log = logrus.New()
 
 func main() {
-	//用法一：直接logrus打印日志
-	Logging.WithFields(logrus.Fields{
+	//用法一：直接打印日志
+	logrus.WithFields(logrus.Fields{
 		"animal": "walrus",
 		"size":   10,
 	}).Info("A group of walrus emerges from the ocean")
 
-	Logging.WithFields(logrus.Fields{
+	logrus.WithFields(logrus.Fields{
 		"omg":    true,
 		"number": 122,
 	}).Warn("The group's number increased tremendously!")
 
-	Logging.WithFields(logrus.Fields{
+	logrus.WithFields(logrus.Fields{
 		"omg":    true,
 		"number": 100,
 	}).Fatal("The ice breaks!")
 
 	//用法二：日记打印到文件
+	var log = logrus.New()
 
 	file, err := os.OpenFile("logrus.log", os.O_CREATE|os.O_WRONLY, 0666)
 	if err == nil {
-		Logging.Out = file
+		log.Out = file
 	} else {
-		Logging.Info("Failed to log to file, using default stderr")
+		log.Info("Failed to log to file, using default stderr")
 	}
 
-	Logging.WithFields(logrus.Fields{
+	log.WithFields(logrus.Fields{
 		"animal": "walrus",
 		"size":   10,
 	}).Fatal("A group of walrus emerges from the ocean")
