@@ -22,4 +22,6 @@ func main() {
 	delete(map2, "two")
 	fmt.Println(map2)
 
+	//map的排序是无序的
+
 }
