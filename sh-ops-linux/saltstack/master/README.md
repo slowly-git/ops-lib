@@ -1,4 +1,4 @@
-###saltstack服务器会使用到的脚本
+### saltstack服务器会使用到的脚本
 ```
 ###delete_dead_salt_minion
 */2 * * * * /root/scripts/delete_salt_dead_machine.sh >>/dev/shm/deleted_minion
