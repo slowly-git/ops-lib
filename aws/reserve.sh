@@ -11,7 +11,7 @@ done|sort -t',' -k2nr >/dev/shm/reserve_final
 
 echo "#################预留数量比正在使用的数量多几个##############################"
 
-aws ec2 describe-instances |grep  -E -w  "^INSTANCES|^STATE" |grep -B1 running |grep -w ^INSTANCES|awk '{for (i=1; i<=NF; i++) if ($i ~ /(large|xlarge|2xlarge|4xlarge|8xlarge)/) print $i}'|uniq -c >/dev/shm/value_online
+aws ec2 describe-instances |grep  -E -w  "^INSTANCES|^STATE" |grep -B1 running |grep -w ^INSTANCES|awk '{for (i=1; i<=NF; i++) if ($i ~ /(nano|micro|small|medium|large|xlarge|2xlarge|4xlarge|8xlarge)/) print $i}'|uniq -c >/dev/shm/value_online
 
 #aws ec2 describe-instances |grep  -E -w  "^INSTANCES|^STATE" |grep -B1 running |grep -w ^INSTANCES|grep -E "2018|jumper02|closer"|awk '{print $8}'|uniq -c >>/dev/shm/value_online
 
