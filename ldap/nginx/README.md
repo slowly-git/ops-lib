@@ -72,7 +72,9 @@ server
         proxy_set_header X-Ldap-BindDN   "uid=nginx,cn=users,cn=accounts,dc=tiejin,dc=cn";
         proxy_set_header X-Ldap-BindPass "xxxxxxxxxx";
 
-        proxy_set_header X-Ldap-Template "(uid=%(username)s)";
+        #proxy_set_header X-Ldap-Template "(uid=%(username)s)";
+	#只允许在用户组kibana_users的用户才能登陆
+        proxy_set_header X-Ldap-Template "(&(uid=%(username)s)(memberOf=cn=kibana_users,cn=groups,cn=accounts,dc=tiejin,dc=cn))";
 
         proxy_set_header X-CookieName "nginxauth";
         proxy_set_header Cookie nginxauth=$cookie_nginxauth;
