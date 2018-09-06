@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"reflect"
+	"math/rand"
 )
 
 type SpotPrice struct {
@@ -10,6 +11,53 @@ type SpotPrice struct {
 	InstenceType               string
 	NowPrice                   float64
 	LastThreeMonthAveragePrice float64
+}
+
+//定义一个链表结构,单链表
+type Student struct {
+	name  string
+	age   int
+	score float32
+	next  *Student
+}
+
+//遍历链表
+func trans(p *Student) {
+	for p != nil {
+		fmt.Println(*p)
+		p = p.next
+	}
+}
+
+/*链表：尾部插入法*/
+func insertTrail(p *Student) {
+	var tail = p
+	for i := 0; i < 10; i++ {
+		var stu = &Student{
+			name:  fmt.Sprintf("stu%d", i),
+			age:   rand.Intn(100),
+			score: rand.Float32() * 100,
+		}
+		tail.next = stu
+		tail = stu
+	}
+
+	trans(p)
+}
+
+/*链表：头部插入法*/
+func insertHead(p *Student) {
+	for i := 0; i < 10; i++ {
+		var stu = &Student{
+			name:  fmt.Sprintf("stu%d", i),
+			age:   rand.Intn(100),
+			score: rand.Float32() * 100,
+		}
+		stu.next = p
+		p = stu
+	}
+
+	trans(p)
 }
 
 func main() {
@@ -67,4 +115,14 @@ func main() {
 		fmt.Println()
 
 	}
+
+	/*链表*/
+	//定义头节点
+	var head Student
+	head.name = "head"
+	head.age = 18
+	head.score = 100
+
+	//insertTrail(&head)
+	insertHead(&head)
 }
