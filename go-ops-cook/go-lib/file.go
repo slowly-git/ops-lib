@@ -14,7 +14,15 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Fprint(f, "line 1\nline 2\nline3\n")
+	//普通写
+	//fmt.Fprint(f, "line 1\nline 2\nline3\n")
+	//带缓冲区的写
+	fWriter := bufio.NewWriter(f)
+	fString := "line 1\nline 2\nline3\n"
+	for i := 0; i < len(fString); i++ {
+		fWriter.WriteString(fString)
+	}
+	fWriter.Flush()
 
 	//准备读文件
 	f2, err := os.Open("/tmp/test.log")
