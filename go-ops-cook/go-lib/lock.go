@@ -8,6 +8,12 @@ import (
 	"time"
 )
 
+/*
+用goroute进行并发的时候，要注意共享数据竞争的情况,可以用以下命令进行排查
+go run -race /src/go_dev/xxx.go
+*/
+
+
 //互斥锁(适用于写多读少,读写都需要加锁)
 var lock sync.Mutex
 
