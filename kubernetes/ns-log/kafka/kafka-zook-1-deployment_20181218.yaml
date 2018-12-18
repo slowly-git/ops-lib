@@ -1,0 +1,85 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kafka-with-zook-1
+  namespace: log
+spec:
+  template:
+    metadata:
+      labels:
+        app: kafka-with-zook-1
+        id: "1"
+    spec:
+      containers:
+      - name: zook1
+        # image: digitalwonderland/zookeeper
+        image: reg.querycap.com/addons/zookeeper:1.0
+        ports:
+        - containerPort: 2181
+        - containerPort: 2888
+        - containerPort: 3888
+        volumeMounts:
+        - mountPath: /var/lib/zookeeper
+          name: zook1-storage 
+          subPath: zook1-storage
+#        env:
+#        - name: ZOOKEEPER_ID
+#          value: "1"
+#        - name: ZOOKEEPER_SERVER_1
+#          value: zook1
+
+      - name: kafka1
+        # image: wurstmeister/kafka
+        image: reg.querycap.com/addons/kafka:2.12-2.1.0
+        ports:
+        - containerPort: 9094
+        # add JMX moniter
+        - containerPort: 1099
+        volumeMounts:
+        - mountPath: /kafka
+          name: kafka1-storage
+          subPath: kafka1-storage
+        env:
+        # config JMX monitoer
+        #- name: KAFKA_JMX_OPTS
+        #  value: "-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=127.0.0.1 -Dcom.sun.management.jmxremote.rmi.port=1099"
+        #- name: JMX_PORT
+        #  value: "1099"
+
+        - name: KAFKA_HOST_IP     # listeners name
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+ 
+        # config protocol map(协议列表)
+        - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
+          value: "INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT,BROKER:PLAINTEXT"
+
+        - name: KAFKA_ADVERTISED_LISTENERS
+          value: INSIDE://kafka-inner-svc:9092,OUTSIDE://kafka-svc:9094
+
+        - name: KAFKA_LISTENERS
+          value: INSIDE://0.0.0.0:9092,OUTSIDE://0.0.0.0:9094
+
+        - name: KAFKA_INTER_BROKER_LISTENER_NAME
+          value: INSIDE
+
+        # config zook
+        - name: KAFKA_ZOOKEEPER_CONNECT
+          value: "127.0.0.1:2181"
+        - name: KAFKA_BROKER_ID
+          value: "1"
+
+      volumes:
+      - name: kafka1-storage 
+        hostPath:
+          path: /data/
+          type: Directory
+      - name: zook1-storage
+        hostPath:
+          path: /data/
+          type: Directory
+      imagePullSecrets:
+        - name: reg-querycap
+      nodeSelector:
+        node: log
