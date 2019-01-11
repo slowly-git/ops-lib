@@ -8,4 +8,6 @@ Alert	187xxxxxxxx,xxxxl@mail.com
 pip install python-memcached
 pip2 install requests
 pip2 install httplib2
+install memcached
+service memcached start
 ```
