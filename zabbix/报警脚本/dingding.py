@@ -38,7 +38,7 @@ def send_dingding_msg(text):
             },
             "at": {
                 "atMobiles": [
-                    "18628803303"
+                    "xxxxxx"
                 ],
                 "isAtAll": False
             }
