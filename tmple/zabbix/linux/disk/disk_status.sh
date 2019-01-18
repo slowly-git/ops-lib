@@ -26,8 +26,8 @@ echo "$HOSTNAME disk.$DEVICE.iostat.wkB `echo "$STATUS" | awk '{print $7}'`" >>$
 echo "$HOSTNAME disk.$DEVICE.iostat.avgrq-sz `echo "$STATUS" | awk '{print $8}'`" >>$DATA_FILE
 echo "$HOSTNAME disk.$DEVICE.iostat.avgqu-sz `echo "$STATUS" | awk '{print $9}'`" >>$DATA_FILE
 echo "$HOSTNAME disk.$DEVICE.iostat.await `echo "$STATUS" | awk '{print $10}'`" >>$DATA_FILE
-echo "$HOSTNAME disk.$DEVICE.iostat.svctm `echo "$STATUS" | awk '{print $11}'`" >>$DATA_FILE
-echo "$HOSTNAME disk.$DEVICE.iostat.util `echo "$STATUS" | awk '{print $12}'`" >>$DATA_FILE
+echo "$HOSTNAME disk.$DEVICE.iostat.svctm `echo "$STATUS" | awk '{print $13}'`" >>$DATA_FILE
+echo "$HOSTNAME disk.$DEVICE.iostat.util `echo "$STATUS" | awk '{print $14}'`" >>$DATA_FILE
 
 ~/bin/zabbix_sender -vv -c $zabbix_agentd_config -i $DATA_FILE >>$LOG_FILE 2>&1
 
